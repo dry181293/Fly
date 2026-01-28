@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Муха PRO — Внимательный ИИ</title>
+    <style>
+        :root { --bg: #0f0f0f; --card: #1a1a1a; --primary: #9d4edd; --error: #ff4d4d; --success: #00f5d4; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; touch-action: manipulation; }
+        .container { width: 100%; max-width: 450px; padding: 15px; box-sizing: border-box; }
+        .card { background: var(--card); border-radius: 25px; padding: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.7); text-align: center; border: 1px solid #333; }
+        .grid { display: grid; gap: 8px; margin: 20px auto; background: #222; padding: 10px; border-radius: 15px; width: fit-content; }
+        .cell { width: 55px; height: 55px; background: #111; border-radius: 8px; border: 1px solid #333; }
+        .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0; }
+        .btn { border: none; border-radius: 18px; padding: 20px; font-size: 20px; font-weight: bold; cursor: pointer; color: white; transition: 0.15s; -webkit-tap-highlight-color: transparent; }
+        .btn-dir { background: #3c096c; box-shadow: 0 4px 0 #240046; }
+        .btn-dir:active { background: var(--primary); transform: translateY(3px); box-shadow: none; }
+        .btn-out { grid-column: span 3; background: var(--error); padding: 25px; font-size: 22px; margin-top: 10px; box-shadow: 0 4px 0 #900; }
+        .status { height: 90px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: bold; color: var(--success); }
+        .setup-row { margin-bottom: 15px; text-align: left; }
+        select, input { width: 100%; padding: 12px; border-radius: 10px; background: #222; color: white; border: 1px solid #444; font-size: 16px; margin-top: 5px; }
+        .history { background: #000; padding: 12px; border-radius: 12px; height: 100px; overflow-y: auto; font-family: monospace; font-size: 13px; color: #666; text-align: left; margin-top: 15px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="setup" class="card">
+        <h2 style="color: var(--primary)">Тренировка "Муха"</h2>
+        <div class="setup-row">Цвет: 
+            <select id="flyColor">
+                <option value="Красная">Красная 🔴</option>
+                <option value="Зеленая">Зеленая 🟢</option>
+                <option value="Желтая">Желтая 🟡</option>
+            </select>
+        </div>
+        <div class="setup-row">Поле: <input type="number" id="size" value="3" min="3" max="5"></div>
+        <div class="setup-row">Сложность:
+            <select id="diff">
+                <option value="easy">Новичок (Медленно)</option>
+                <option value="med" selected>Пилот (Средне)</option>
+                <option value="hard">Ас (Быстро)</option>
+            </select>
+        </div>
+        <button onclick="startGame()" class="btn" style="background: var(--success); width: 100%; color: #000;">НАЧАТЬ ИГРУ</button>
+    </div>
+
+    <div id="game" class="card hidden">
+        <div class="status" id="status-main">Приготовься...</div>
+        <div id="grid" class="grid"></div>
+        <div class="controls">
+            <div></div><button class="btn btn-dir" onclick="handleMove('вверх')">↑</button><div></div>
+            <button class="btn btn-dir" onclick="handleMove('влево')">←</button>
+            <button class="btn btn-dir" onclick="handleMove('вниз')">↓</button>
+            <button class="btn btn-dir" onclick="handleMove('вправо')">→</button>
+            <button class="btn btn-out" onclick="playerClaimOut()">МУХА ВЫЛЕТЕЛА!</button>
+        </div>
+        <div id="log" class="history"></div>
+        <button onclick="location.reload()" style="margin-top: 20px; background: none; border: 1px solid #444; color: #666; padding: 10px; border-radius: 10px; width: 100%;">Сброс</button>
+    </div>
+</div>
+
+<script>
+    let config = { size: 3, color: '', diff: '' };
+    let fly = { x: 0, y: 0, out: false };
+    let lastDir = null;
+    let isAiTurn = false;
+    let gameOver = false;
+    let aiWaitTimeout;
+
+    const dirs = { 'вверх': {x: 0, y: -1}, 'вниз': {x: 0, y: 1}, 'влево': {x: -1, y: 0}, 'вправо': {x: 1, y: 0} };
+    const opposites = { 'вверх': 'вниз', 'вниз': 'вверх', 'влево': 'вправо', 'вправо': 'влево' };
+
+    function speak(text) {
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = 'ru-RU';
+        window.speechSynthesis.speak(msg);
+    }
+
+    function startGame() {
+        config.size = parseInt(document.getElementById('size').value);
+        config.color = document.getElementById('flyColor').value;
+        config.diff = document.getElementById('diff').value;
+
+        fly.x = Math.floor(config.size / 2);
+        fly.y = Math.floor(config.size / 2);
+
+        document.getElementById('setup').classList.add('hidden');
+        document.getElementById('game').classList.remove('hidden');
+
+        const grid = document.getElementById('grid');
+        grid.style.gridTemplateColumns = `repeat(${config.size}, 1fr)`;
+        grid.innerHTML = '';
+        for(let i=0; i < config.size * config.size; i++) grid.innerHTML += `<div class="cell"></div>`;
+
+        const firstDir = Object.keys(dirs)[Math.floor(Math.random() * 4)];
+        const startText = `${config.color} муха в центре, ${config.color} муха ${firstDir}`;
+        
+        updateStatus(startText);
+        speak(startText);
+        moveLogic(firstDir, 'ИИ');
+    }
+
+    function handleMove(dir) {
+        if (gameOver || isAiTurn) return;
+
+        // ПРОВЕРКА НА ОБРАТНЫЙ ХОД
+        if (lastDir && dir === opposites[lastDir]) {
+            speak("Ошибка! Обратный ход запрещен.");
+            endGame("ПРОИГРЫШ! Ты сделал обратный ход. Это запрещено.");
+            return;
+        }
+
+        moveLogic(dir, 'Ты');
+        updateStatus(`Ты: ${dir.toUpperCase()}`);
+        
+        if (fly.out) {
+            // ИИ замолкает и ждет, нажмешь ли ты кнопку
+            startAiWaitingTimer();
+        } else {
+            isAiTurn = true;
+            let delay = config.diff === 'easy' ? 2000 : (config.diff === 'med' ? 1200 : 700);
+            setTimeout(aiMove, delay);
+        }
+    }
+
+    function aiMove() {
+        if (gameOver || fly.out) return;
+        
+        let allowedKeys = Object.keys(dirs).filter(k => k !== opposites[lastDir]);
+        let move = allowedKeys[Math.floor(Math.random() * allowedKeys.length)];
+
+        speak(move);
+        updateStatus(`ИИ: ${move.toUpperCase()}`);
+        moveLogic(move, 'ИИ');
+        isAiTurn = false;
+
+        if (fly.out) {
+            startAiWaitingTimer();
+        }
+    }
+
+    function startAiWaitingTimer() {
+        // Если через 3.5 секунды игрок не нажал "Вылетела", ИИ объявляет победу
+        aiWaitTimeout = setTimeout(() => {
+            if (!gameOver) {
+                speak("Ха-ха! Муха уже улетела, а ты и не заметил! Я победил.");
+                endGame("ИИ ПОБЕДИЛ! Ты пропустил момент вылета мухи.");
+            }
+        }, 3500);
+    }
+
+    function moveLogic(dir, player) {
+        fly.x += dirs[dir].x;
+        fly.y += dirs[dir].y;
+        lastDir = dir;
+        const logEntry = `<div>${player}: ${dir}</div>`;
+        document.getElementById('log').innerHTML = logEntry + document.getElementById('log').innerHTML;
+        
+        if (fly.x < 0 || fly.x >= config.size || fly.y < 0 || fly.y >= config.size) {
+            fly.out = true;
+        }
+    }
+
+    function playerClaimOut() {
+        if (gameOver) return;
+        clearTimeout(aiWaitTimeout);
+        
+        if (fly.out) {
+            speak("Верно! Ты победил, муха вылетела.");
+            endGame("ПОБЕДА! Ты вовремя заметил вылет.");
+        } else {
+            speak("Нет! Муха еще на поле. Ты проиграл.");
+            endGame("ПРОИГРЫШ! Ты нажал кнопку, когда муха была еще в поле.");
+        }
+    }
+
+    function updateStatus(txt) {
+        document.getElementById('status-main').innerText = txt;
+    }
+
+    function endGame(msg) {
+        gameOver = true;
+        setTimeout(() => {
+            alert(msg);
+            location.reload();
+        }, 500);
+    }
+</script>
+</body>
+</html>
