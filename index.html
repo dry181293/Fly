@@ -3,27 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Муха PRO: Долгий Полет</title>
+    <title>Муха PRO: Redesign</title>
     <style>
-        :root { --bg: #0d1117; --card: #161b22; --primary: #58a6ff; --err: #f85149; --succ: #3fb950; }
-        body { font-family: -apple-system, sans-serif; background: var(--bg); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; touch-action: manipulation; }
-        .container { width: 100%; max-width: 450px; padding: 15px; box-sizing: border-box; }
-        .card { background: var(--card); border-radius: 20px; padding: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); text-align: center; border: 1px solid #30363d; position: relative; }
-        .help-btn { position: absolute; top: 15px; right: 15px; background: #30363d; border: none; color: var(--primary); width: 30px; height: 30px; border-radius: 50%; font-weight: bold; cursor: pointer; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid var(--primary); max-width: 400px; font-size: 14px; text-align: left; }
-        .grid { display: grid; gap: 8px; margin: 15px auto; background: #30363d; padding: 8px; border-radius: 12px; transition: 0.3s; }
-        .grid.hidden-grid { opacity: 0; }
-        .cell { width: 55px; height: 55px; background: #0d1117; border-radius: 6px; border: 1px solid #444; }
-        .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
-        .btn { border: none; border-radius: 12px; padding: 18px; font-size: 18px; font-weight: bold; cursor: pointer; color: white; }
-        .btn-dir { background: #21262d; border: 1px solid #30363d; }
-        .btn-out { grid-column: span 3; background: var(--err); font-size: 20px; }
-        .status { height: 80px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--primary); font-weight: bold; }
-        .setup-row { margin-bottom: 12px; text-align: left; }
-        select, input { width: 100%; padding: 12px; border-radius: 8px; background: #0d1117; color: white; border: 1px solid #30363d; margin-top: 4px; }
-        .history { background: #000; padding: 10px; border-radius: 8px; height: 60px; overflow-y: auto; font-family: monospace; font-size: 12px; color: #8b949e; text-align: left; }
-        .toggle-view { background: #30363d; color: #c9d1d9; padding: 8px; border-radius: 8px; cursor: pointer; border: none; width: 100%; margin-bottom: 5px; }
+        :root { --bg: #0b0e14; --panel: rgba(23, 28, 36, 0.8); --primary: #7928ca; --accent: #ff0080; --succ: #00dfd8; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: radial-gradient(circle at top, #1a1f2c, #0b0e14); color: white; margin: 0; min-height: 100vh; display: flex; justify-content: center; touch-action: manipulation; }
+        .container { width: 100%; max-width: 420px; padding: 15px; box-sizing: border-box; }
+        
+        .card { background: var(--panel); backdrop-filter: blur(10px); border-radius: 24px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); text-align: center; position: relative; }
+        
+        .fly-emoji { font-size: 2rem; margin-bottom: 10px; display: block; animation: hover 2s ease-in-out infinite; }
+        @keyframes hover { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+        .status { min-height: 80px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 700; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        
+        .grid { display: grid; gap: 6px; margin: 15px auto; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); transition: 0.4s; }
+        .grid.hidden-grid { opacity: 0; transform: scale(0.95); pointer-events: none; }
+        .cell { width: 55px; height: 55px; background: rgba(255,255,255,0.03); border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }
+
+        .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0; }
+        .btn { border: none; border-radius: 16px; cursor: pointer; color: white; transition: 0.2s; font-weight: bold; }
+        .btn-dir { background: linear-gradient(145deg, #2c3344, #1a1f2c); border: 1px solid rgba(255,255,255,0.1); height: 65px; font-size: 1.5rem; }
+        .btn-dir:active { transform: scale(0.9); background: var(--primary); }
+        
+        .btn-out { grid-column: span 3; background: linear-gradient(90deg, #ff0080, #7928ca); padding: 20px; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(255,0,128,0.3); }
+
+        .history { background: rgba(0,0,0,0.4); padding: 12px; border-radius: 16px; height: 100px; overflow-y: auto; font-family: 'Consolas', monospace; font-size: 13px; color: #aaa; text-align: left; border: 1px solid rgba(255,255,255,0.05); }
+        
+        .setup-row { margin-bottom: 15px; text-align: left; }
+        select, input { width: 100%; padding: 14px; border-radius: 12px; background: #0b0e14; color: white; border: 1px solid #30363d; font-size: 16px; margin-top: 5px; }
+        
+        .toggle-view { background: none; border: 1px solid var(--primary); color: var(--primary); padding: 8px 15px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; margin-bottom: 10px; transition: 0.3s; }
+        .toggle-view:hover { background: var(--primary); color: white; }
+        
         .hidden { display: none; }
     </style>
 </head>
@@ -31,27 +42,29 @@
 
 <div class="container">
     <div id="setup" class="card">
-        <button class="help-btn" onclick="toggleModal(true)">?</button>
-        <h2 style="color: var(--primary)">Муха PRO</h2>
-        <div class="setup-row">Количество мух:
-            <select id="flyCount"><option value="1">1 Муха</option><option value="2">2 Мухи</option><option value="3">3 Мухи</option></select>
-        </div>
-        <div class="setup-row">Поле: <input type="number" id="size" value="3" min="3" max="5"></div>
-        <div class="setup-row">Вероятность вылета (после разминки):
-            <select id="diff">
-                <option value="0.03">Очень низкая (длинная игра)</option>
-                <option value="0.08" selected>Сбалансированная</option>
-                <option value="0.2">Высокая</option>
+        <span class="fly-emoji">🪰</span>
+        <h2 style="margin: 0 0 20px 0; background: linear-gradient(to right, #fff, #888); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">МУХА PRO</h2>
+        
+        <div class="setup-row">
+            Мух на поле:
+            <select id="flyCount">
+                <option value="1">1 Муха (Красная 🔴)</option>
+                <option value="2">2 Мухи (Красная 🔴, Зеленая 🟢)</option>
             </select>
         </div>
-        <button onclick="startGame()" class="btn" style="background: var(--succ); width: 100%; color: #000;">ПОЛЕТЕЛИ</button>
+        
+        <div class="setup-row">
+            Размер поля: <input type="number" id="size" value="3" min="3" max="5">
+        </div>
+
+        <button onclick="startGame()" class="btn btn-out" style="margin-top: 20px;">Взлетаем!</button>
     </div>
 
     <div id="game" class="card hidden">
-        <button class="help-btn" onclick="toggleModal(true)">?</button>
-        <button id="toggleGrid" class="toggle-view" onclick="toggleGrid()">Скрыть поле</button>
-        <div id="status" class="status">Приготовься...</div>
+        <button id="toggleGrid" class="toggle-view" onclick="toggleGrid()">👁 Скрыть поле</button>
+        <div id="status" class="status"></div>
         <div id="grid" class="grid"></div>
+        
         <div class="controls">
             <div></div><button class="btn btn-dir" onclick="handleMove('вверх')">↑</button><div></div>
             <button class="btn btn-dir" onclick="handleMove('влево')">←</button>
@@ -60,98 +73,130 @@
             <button class="btn btn-out" onclick="playerClaimOut()">МУХА ВЫЛЕТЕЛА!</button>
         </div>
         <div id="log" class="history"></div>
+        <button onclick="location.reload()" style="margin-top: 15px; background: none; border: none; color: #555; font-size: 13px;">Сброс игры</button>
     </div>
 </div>
 
-<div id="helpModal" class="modal"><div class="modal-content">
-    <h3 style="text-align:center; color:var(--primary)">Правила</h3>
-    <p>• Держите муху в уме. Кнопка "Скрыть поле" делает тренировку эффективнее.<br>
-    • Первые 5 ходов муха <b>точно не вылетит</b> (разминка).<br>
-    • ИИ старается летать внутри поля, вылет случается редко и внезапно.<br>
-    • Назад ходить нельзя! Нажал "Вправо" — "Влево" сразу нажимать запрещено.</p>
-    <button class="btn" style="background:var(--primary); width:100%; color:black" onclick="toggleModal(false)">ПОНЯТНО</button>
-</div></div>
-
 <script>
-    let cfg = { size: 3, count: 1, diff: 0.08 };
+    let cfg = { size: 3, count: 1 };
     let flies = [];
     let activeFlyIdx = 0;
-    let turnCounter = 0;
+    let turnCount = 0;
     let gameOver = false;
     let aiTimeout;
+
     const dirs = { 'вверх': {x: 0, y: -1}, 'вниз': {x: 0, y: 1}, 'влево': {x: -1, y: 0}, 'вправо': {x: 1, y: 0} };
     const opposites = { 'вверх': 'вниз', 'вниз': 'вверх', 'влево': 'вправо', 'вправо': 'влево' };
-    const colors = ['Красная', 'Зеленая', 'Желтая'];
+    const flyData = [
+        { name: 'Красная муха', icon: '🔴' },
+        { name: 'Зеленая муха', icon: '🟢' }
+    ];
 
-    function toggleModal(s) { document.getElementById('helpModal').style.display = s ? 'flex' : 'none'; }
-    function speak(t) { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(t); m.lang = 'ru-RU'; window.speechSynthesis.speak(m); }
-    function toggleGrid() { document.getElementById('grid').classList.toggle('hidden-grid'); }
+    function speak(text) {
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = 'ru-RU';
+        window.speechSynthesis.speak(msg);
+    }
+
+    function toggleGrid() {
+        const g = document.getElementById('grid');
+        g.classList.toggle('hidden-grid');
+        document.getElementById('toggleGrid').innerText = g.classList.contains('hidden-grid') ? "👁 Показать поле" : "👁 Скрыть поле";
+    }
 
     function startGame() {
         cfg.size = parseInt(document.getElementById('size').value);
         cfg.count = parseInt(document.getElementById('flyCount').value);
-        cfg.diff = parseFloat(document.getElementById('diff').value);
-        turnCounter = 0;
-        for(let i=0; i<cfg.count; i++) flies.push({ x: Math.floor(cfg.size/2), y: Math.floor(cfg.size/2), name: colors[i], out: false, lastDir: null });
+        
+        for(let i=0; i<cfg.count; i++) {
+            flies.push({ 
+                x: Math.floor(cfg.size/2), 
+                y: Math.floor(cfg.size/2), 
+                name: flyData[i].name, 
+                icon: flyData[i].icon,
+                out: false, 
+                lastDir: null 
+            });
+        }
+
         document.getElementById('setup').classList.add('hidden');
         document.getElementById('game').classList.remove('hidden');
+
         const g = document.getElementById('grid');
         g.style.gridTemplateColumns = `repeat(${cfg.size}, 1fr)`;
-        g.innerHTML = '';
         for(let i=0; i<cfg.size*cfg.size; i++) g.innerHTML += `<div class="cell"></div>`;
+
+        // ПЕРВЫЙ ХОД (специальная фраза)
+        const f = flies[0];
+        const initialDir = Object.keys(dirs)[Math.floor(Math.random()*4)];
+        const startPhrase = `${f.name} в центре — ${f.name} ${initialDir}`;
         
-        let initialDir = Object.keys(dirs)[Math.floor(Math.random()*4)];
-        speak(`${flies[0].name} муха в центре, ${flies[0].name} ${initialDir}`);
-        moveLogic(flies[0], initialDir, 'ИИ');
-        updateStatus(`Ход: ${flies[0].name}`);
+        updateStatus(startPhrase);
+        speak(startPhrase);
+        moveLogic(f, initialDir, 'ИИ');
     }
 
     function handleMove(d) {
         if(gameOver) return;
         let f = flies[activeFlyIdx];
+        
         if(f.lastDir && d === opposites[f.lastDir]) {
             speak("Ошибка! Назад нельзя.");
-            return endGame("Проигрыш! Обратный ход запрещен.");
+            return endGame("Ошибка! Назад ходить нельзя.");
         }
+
+        const moveText = `${f.name} ${d}`;
+        updateStatus(`Ты: ${moveText.toUpperCase()}`);
         moveLogic(f, d, 'Ты');
-        if(f.out) aiTimeout = setTimeout(() => endGame(`ИИ ЗАМЕТИЛ! ${f.name} муха улетела.`), 3500);
-        else { activeFlyIdx = (activeFlyIdx + 1) % cfg.count; turnCounter++; setTimeout(aiMove, 1000); }
+        
+        if(f.out) {
+            aiTimeout = setTimeout(() => endGame(`ИИ ЗАМЕТИЛ ВЫЛЕТ! ${f.name} улетела.`), 3500);
+        } else {
+            activeFlyIdx = (activeFlyIdx + 1) % cfg.count;
+            turnCount++;
+            setTimeout(aiMove, 1200);
+        }
     }
 
     function aiMove() {
-        if(gameOver || flies.some(f => f.out)) return;
+        if(gameOver || flies.some(fl => fl.out)) return;
         let f = flies[activeFlyIdx];
-        let keys = Object.keys(dirs).filter(k => k !== opposites[f.lastDir]);
         
+        let keys = Object.keys(dirs).filter(k => k !== opposites[f.lastDir]);
         let safeKeys = keys.filter(k => {
             let nx = f.x + dirs[k].x; let ny = f.y + dirs[k].y;
             return nx >= 0 && nx < cfg.size && ny >= 0 && ny < cfg.size;
         });
 
-        let move;
-        // Если первые 5 ходов или сработала "безопасность", выбираем из безопасных
-        if (turnCounter < 5 || Math.random() > cfg.diff) {
-            move = safeKeys.length > 0 ? safeKeys[Math.floor(Math.random()*safeKeys.length)] : keys[Math.floor(Math.random()*keys.length)];
-        } else {
-            move = keys[Math.floor(Math.random()*keys.length)]; // Может вылететь
-        }
+        // ИИ старается не вылетать первые 6 ходов
+        let move = (turnCount < 6 || Math.random() > 0.1) && safeKeys.length > 0 ? 
+                   safeKeys[Math.floor(Math.random()*safeKeys.length)] : 
+                   keys[Math.floor(Math.random()*keys.length)];
 
-        speak(`${f.name} ${move}`);
-        updateStatus(`${f.name}: ${move.toUpperCase()}`);
+        const movePhrase = `${f.name} ${move}`;
+        speak(movePhrase);
+        updateStatus(movePhrase.toUpperCase());
         moveLogic(f, move, 'ИИ');
-        if(f.out) aiTimeout = setTimeout(() => endGame(`ИИ ПОБЕДИЛ! Муха ${f.name} улетела!`), 4000);
-        else { activeFlyIdx = (activeFlyIdx + 1) % cfg.count; turnCounter++; }
+        
+        if(f.out) {
+            aiTimeout = setTimeout(() => endGame(`ИИ ПОБЕДИЛ! Ты не заметил вылет мухи ${f.name}`), 4000);
+        } else {
+            activeFlyIdx = (activeFlyIdx + 1) % cfg.count;
+            turnCount++;
+        }
     }
 
     function moveLogic(f, d, p) {
         f.x += dirs[d].x; f.y += dirs[d].y; f.lastDir = d;
-        document.getElementById('log').innerHTML = `<div>${p}: ${f.name} ${d}</div>` + document.getElementById('log').innerHTML;
+        const entry = `<div>${f.icon} ${p}: ${f.name} ${d}</div>`;
+        document.getElementById('log').innerHTML = entry + document.getElementById('log').innerHTML;
         if(f.x < 0 || f.x >= cfg.size || f.y < 0 || f.y >= cfg.size) f.out = true;
     }
 
     function playerClaimOut() {
         clearTimeout(aiTimeout);
-        if(flies.some(f => f.out)) endGame("ПОБЕДА! Ты вовремя заметил вылет.");
+        if(flies.some(f => f.out)) endGame("ПОБЕДА! Твоя концентрация на высоте.");
         else endGame("ОШИБКА! Муха все еще на поле.");
     }
 
