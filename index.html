@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Муха PRO: Full Edition</title>
+    <title>Муха PRO: Verified Edition</title>
     <style>
         :root { --bg: #0b0e14; --panel: #161b22; --primary: #7928ca; --accent: #ff0080; --text: #e6edf3; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b0e14; color: var(--text); margin: 0; min-height: 100vh; display: flex; justify-content: center; touch-action: manipulation; }
@@ -12,11 +12,10 @@
         .card { background: var(--panel); border-radius: 24px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid #30363d; text-align: center; position: relative; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Заголовок с анимацией */
         .title-fly { display: inline-block; animation: buzz 0.3s infinite alternate; }
         @keyframes buzz { from { transform: translate(0,0); } to { transform: translate(1px, 1px); } }
 
-        .help-btn { position: absolute; top: 20px; right: 20px; background: #30363d; border: none; color: var(--primary); width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-weight: bold; }
+        .help-btn { position: absolute; top: 20px; right: 20px; background: #30363d; border: none; color: var(--primary); width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-weight: bold; z-index: 5; }
 
         .status-box { min-height: 90px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: bold; margin-bottom: 10px; }
         .turn-tag { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--primary); margin-bottom: 5px; border: 1px solid; padding: 2px 8px; border-radius: 10px; }
@@ -35,13 +34,12 @@
 
         .setup-row { margin-bottom: 12px; text-align: left; }
         label { font-size: 11px; color: #8b949e; display: block; margin-bottom: 4px; text-transform: uppercase; }
-        select, input { width: 100%; padding: 10px; border-radius: 10px; background: #0d1117; color: white; border: 1px solid #30363d; font-size: 15px; }
+        select, input { width: 100%; padding: 10px; border-radius: 10px; background: #0d1117; color: white; border: 1px solid #30363d; font-size: 15px; outline: none; }
 
-        .history { background: #000; padding: 12px; border-radius: 12px; height: 100px; overflow-y: auto; font-family: monospace; font-size: 12px; color: #8b949e; border: 1px solid #21262d; margin-top: 15px; text-align: left; }
+        .history { background: #000; padding: 12px; border-radius: 12px; height: 100px; overflow-y: auto; font-family: monospace; font-size: 11px; color: #8b949e; border: 1px solid #21262d; margin-top: 15px; text-align: left; }
         
-        /* Модальное окно */
-        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:100; align-items:center; justify-content:center; padding:20px; box-sizing: border-box; }
-        .modal-content { background: var(--panel); padding: 25px; border-radius: 20px; border: 1px solid var(--primary); max-width: 350px; }
+        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:100; align-items:center; justify-content:center; padding:20px; box-sizing: border-box; }
+        .modal-content { background: var(--panel); padding: 25px; border-radius: 20px; border: 1px solid var(--primary); max-width: 350px; text-align: center; }
         
         .hidden { display: none; }
     </style>
@@ -54,7 +52,7 @@
         <h2 style="margin: 0 0 20px 0;"><span class="title-fly">🪰</span> МУХА PRO</h2>
         
         <div class="setup-row">
-            <label>Цвет мухи:</label>
+            <label>Цвет первой мухи:</label>
             <select id="flyColor">
                 <option value="0">Красная 🔴</option>
                 <option value="1" selected>Зеленая 🟢</option>
@@ -65,7 +63,7 @@
         </div>
 
         <div class="setup-row">
-            <label>Цепочка игроков (ИИ):</label>
+            <label>Игроков ИИ (цепочка):</label>
             <select id="aiChain">
                 <option value="1">1 Бот (Альфа 🤖)</option>
                 <option value="2">2 Бота (Альфа, Бета 🦾)</option>
@@ -74,57 +72,57 @@
         </div>
 
         <div class="setup-row">
-            <label>Сложность (риск вылета):</label>
+            <label>Сложность:</label>
             <select id="diff">
-                <option value="0.03">Низкая</option>
-                <option value="0.1" selected>Средняя</option>
-                <option value="0.25">Высокая</option>
+                <option value="0.04">Низкая (для профи)</option>
+                <option value="0.1" selected>Средняя (стандарт)</option>
+                <option value="0.25">Высокая (опасно)</option>
             </select>
         </div>
 
         <div class="setup-row">
-            <label>Кол-во мух:</label>
+            <label>Количество мух:</label>
             <select id="flyCount">
                 <option value="1">1 Муха</option>
                 <option value="2">2 Мухи</option>
+                <option value="3">3 Мухи</option>
+                <option value="4">4 Мухи</option>
+                <option value="5">5 Мух (ULTRA)</option>
             </select>
         </div>
 
-        <button onclick="startGame()" class="btn btn-out">Начать тренировку</button>
+        <button onclick="startGame()" class="btn btn-out">Старт</button>
     </div>
 
     <div id="game" class="card hidden">
         <button class="help-btn" onclick="toggleModal(true)">?</button>
-        <div id="turnTag" class="turn-tag">Загрузка...</div>
+        <div id="turnTag" class="turn-tag">...</div>
         <div id="status" class="status-box"></div>
-        
-        <button id="toggleGrid" style="background:none; border:none; color:#555; cursor:pointer; font-size:10px; margin-bottom:5px;" onclick="toggleGrid()">👁 Скрыть поле</button>
-
+        <button id="toggleGrid" style="background:none; border:none; color:#555; cursor:pointer; font-size:10px; margin-bottom:5px;" onclick="toggleGrid()">👁 Поле: ВКЛ/ВЫКЛ</button>
         <div class="grid" id="grid"></div>
-        
         <div class="controls">
             <div></div><button class="btn btn-dir" onclick="handleMove('вверх')">↑</button><div></div>
             <button class="btn btn-dir" onclick="handleMove('влево')">←</button>
             <button class="btn btn-dir" onclick="handleMove('вниз')">↓</button>
             <button class="btn btn-dir" onclick="handleMove('вправо')">→</button>
-            <button class="btn btn-out" onclick="playerClaimOut()">Муха вылетела!</button>
+            <button class="btn btn-out" onclick="playerClaimOut()">МУХА ВЫЛЕТЕЛА!</button>
         </div>
         <div id="log" class="history"></div>
-        <button onclick="location.reload()" style="background:none; border:none; color:#444; margin-top:10px; cursor:pointer;">В меню</button>
+        <button onclick="location.reload()" style="background:none; border:none; color:#444; margin-top:10px; cursor:pointer; font-size:11px;">В меню</button>
     </div>
 </div>
 
 <div id="helpModal" class="modal">
     <div class="modal-content">
-        <h3 style="color:var(--primary); margin-top:0">Как играть?</h3>
-        <p style="font-size: 13px; text-align: left; line-height: 1.5;">
-            1. Следите за мухами <b>в уме</b>.<br>
-            2. Ходы идут по цепочке: Вы -> ИИ Боты.<br>
-            3. <b>Запрещено</b> ходить назад (например, Вниз после Вверх).<br>
-            4. Если ИИ или Вы вывели муху за поле — жмите кнопку вылета!<br>
-            5. Первые 5 ходов — разминочные.
+        <h3 style="color:var(--primary); margin-top:0">Справка</h3>
+        <p style="font-size: 13px; text-align: left; line-height: 1.4; color: #ccc;">
+            • Помни позиции всех мух (до 5 штук).<br>
+            • Ходы по кругу: Ты → Боты.<br>
+            • Каждому ходу соответствует следующая муха.<br>
+            • <b>Нельзя</b> ходить в обратную сторону последнему ходу той же мухи.<br>
+            • Если любая муха вылетела — жми кнопку!
         </p>
-        <button class="btn btn-out" style="width:100%" onclick="toggleModal(false)">Понял!</button>
+        <button class="btn btn-out" style="width:100%" onclick="toggleModal(false)">Понял</button>
     </div>
 </div>
 
@@ -138,20 +136,17 @@
     let cfg = {};
     let flies = [];
     let chain = [];
-    let cIdx = 0;
-    let fIdx = 0;
-    let moves = 0;
-    let isOver = false;
-    let timer;
+    let cIdx = 0; 
+    let fIdx = 0; 
+    let totalMoves = 0;
+    let isGameOver = false;
+    let aiWaitTimer;
 
     const dirs = { 'вверх': {x:0, y:-1}, 'вниз': {x:0, y:1}, 'влево': {x:-1, y:0}, 'вправо': {x:1, y:0} };
     const opps = { 'вверх':'вниз', 'вниз':'вверх', 'влево':'вправо', 'вправо':'влево' };
 
     function toggleModal(s) { document.getElementById('helpModal').style.display = s ? 'flex' : 'none'; }
-    function toggleGrid() { 
-        const g = document.getElementById('grid'); g.classList.toggle('hidden-grid');
-        document.getElementById('toggleGrid').innerText = g.classList.contains('hidden-grid') ? "👁 Показать поле" : "👁 Скрыть поле";
-    }
+    function toggleGrid() { document.getElementById('grid').classList.toggle('hidden-grid'); }
     function speak(t) { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(t); m.lang = 'ru-RU'; window.speechSynthesis.speak(m); }
 
     function startGame() {
@@ -179,83 +174,4 @@
         g.innerHTML = '';
         for(let i=0; i<9; i++) g.innerHTML += '<div class="cell"></div>';
 
-        // ПЕРВЫЙ ХОД ИИ (по ТЗ)
-        const f = flies[0];
-        const d = Object.keys(dirs)[Math.floor(Math.random()*4)];
-        const startMsg = `${f.n} в центре — ${f.n} ${d}`;
-        updateStatus(`${f.i} ${startMsg}`);
-        speak(startMsg);
-        moveLogic(f, d, bots[0].n, bots[0].i);
-
-        cIdx = 0; // Следующий — игрок
-        nextTurn();
-    }
-
-    function nextTurn() {
-        if(isOver) return;
-        cIdx = (cIdx + 1) % chain.length;
-        const p = chain[cIdx];
-
-        if(p === 'user') {
-            document.getElementById('turnTag').innerText = "Твой ход";
-            toggleBtns(true);
-        } else {
-            const idx = parseInt(p.replace('ai',''));
-            document.getElementById('turnTag').innerText = `Ходит ${bots[idx].n}`;
-            toggleBtns(false);
-            setTimeout(() => performAi(idx), 1400);
-        }
-    }
-
-    function handleMove(d) {
-        if(isOver) return;
-        let f = flies[fIdx];
-        if(f.last && d === opps[f.last]) return alert("Нельзя ходить назад!");
-        
-        moveLogic(f, d, 'Ты', '👤');
-        if(f.out) timer = setTimeout(() => finish(`ИИ заметил вылет мухи ${f.n}!`), 3500);
-        else { fIdx = (fIdx + 1) % cfg.fCount; moves++; nextTurn(); }
-    }
-
-    function performAi(idx) {
-        if(isOver || flies.some(f => f.out)) return;
-        let f = flies[fIdx];
-        let bot = bots[idx];
-
-        let keys = Object.keys(dirs).filter(k => k !== opps[f.last]);
-        let safe = keys.filter(k => {
-            let nx = f.x + dirs[k].x; let ny = f.y + dirs[k].y;
-            return nx >= 0 && nx < 3 && ny >= 0 && ny < 3;
-        });
-
-        let m = (moves < 5 || Math.random() > cfg.diff) && safe.length > 0 ? 
-                safe[Math.floor(Math.random()*safe.length)] : 
-                keys[Math.floor(Math.random()*keys.length)];
-
-        updateStatus(`${f.i} ${f.n} ${m.toUpperCase()}`);
-        speak(`${f.n} ${m}`);
-        moveLogic(f, m, bot.n, bot.i);
-
-        if(f.out) timer = setTimeout(() => finish(`ИИ победил! Вы пропустили вылет ${f.n}`), 4000);
-        else { fIdx = (fIdx + 1) % cfg.fCount; moves++; nextTurn(); }
-    }
-
-    function moveLogic(f, d, pN, pI) {
-        f.x += dirs[d].x; f.y += dirs[d].y; f.last = d;
-        const l = document.getElementById('log');
-        l.innerHTML = `<div style="border-bottom:1px solid #222; padding:3px 0">${pI} ${pN}: ${f.i} ${d}</div>` + l.innerHTML;
-        if(f.x < 0 || f.x >= 3 || f.y < 0 || f.y >= 3) f.out = true;
-    }
-
-    function playerClaimOut() {
-        clearTimeout(timer);
-        if(flies.some(f => f.out)) finish("ПОБЕДА! Ты очень внимателен.");
-        else finish("ОШИБКА! Муха еще на поле.");
-    }
-
-    function toggleBtns(on) { document.querySelectorAll('.btn-dir').forEach(b => b.disabled = !on); }
-    function updateStatus(t) { document.getElementById('status').innerText = t; }
-    function finish(m) { isOver = true; alert(m); location.reload(); }
-</script>
-</body>
-</html>
+        // ПЕРВЫЙ ХОД (ИИ Аль
