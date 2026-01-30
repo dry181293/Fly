@@ -3,53 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Муха PRO: Цепочка Игроков</title>
+    <title>Муха PRO: Гроссмейстер</title>
     <style>
         :root { --bg: #0b0e14; --panel: #161b22; --primary: #7928ca; --accent: #ff0080; --succ: #00dfd8; --text: #e6edf3; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: radial-gradient(circle at center, #1a1f2c 0%, #0b0e14 100%); color: var(--text); margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; touch-action: manipulation; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b0e14; color: var(--text); margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; touch-action: manipulation; }
         .container { width: 100%; max-width: 420px; padding: 20px; box-sizing: border-box; }
         
-        .card { background: var(--panel); border-radius: 24px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid #30363d; text-align: center; position: relative; animation: cardEnter 0.5s ease-out; }
-        @keyframes cardEnter { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .card { background: var(--panel); border-radius: 24px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid #30363d; text-align: center; position: relative; animation: cardEnter 0.4s ease-out; }
+        @keyframes cardEnter { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
-        .status-box { min-height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; color: #fff; line-height: 1.4; }
-        .turn-indicator { font-size: 0.8rem; color: var(--succ); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        /* Статус и Очередь */
+        .status-box { min-height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; color: #fff; }
+        .turn-tag { font-size: 0.75rem; color: var(--primary); text-transform: uppercase; letter-spacing: 1.5px; border: 1px solid var(--primary); padding: 2px 10px; border-radius: 10px; margin-bottom: 8px; }
 
-        .grid-container { min-height: 200px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; }
-        .grid { display: grid; gap: 8px; background: #30363d; padding: 10px; border-radius: 16px; transition: 0.4s; }
+        .grid-container { min-height: 190px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; }
+        .grid { display: grid; gap: 8px; background: #30363d; padding: 10px; border-radius: 16px; transition: 0.3s; }
         .grid.hidden-grid { opacity: 0; transform: scale(0.9); pointer-events: none; }
         .cell { width: 50px; height: 50px; background: #0d1117; border-radius: 8px; border: 1px solid #21262d; }
 
         .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
         .btn { border: none; border-radius: 16px; cursor: pointer; color: white; transition: 0.15s; font-weight: bold; }
         .btn-dir { background: #21262d; border: 1px solid #30363d; height: 60px; font-size: 1.5rem; }
-        .btn-dir:active { background: var(--primary); transform: scale(0.9); }
-        .btn-dir:disabled { opacity: 0.3; cursor: not-allowed; }
+        .btn-dir:active:not(:disabled) { background: var(--primary); transform: scale(0.9); }
+        .btn-dir:disabled { opacity: 0.2; cursor: default; }
         
-        .btn-out { grid-column: span 3; background: linear-gradient(90deg, var(--accent), var(--primary)); padding: 20px; font-size: 1.2rem; text-transform: uppercase; box-shadow: 0 4px 15px rgba(255,0,128,0.3); }
+        .btn-out { grid-column: span 3; background: linear-gradient(90deg, var(--accent), var(--primary)); padding: 20px; font-size: 1.1rem; text-transform: uppercase; }
 
-        .setup-row { margin-bottom: 15px; text-align: left; }
-        label { font-size: 12px; color: #8b949e; display: block; margin-bottom: 4px; text-transform: uppercase; }
-        select, input { width: 100%; padding: 12px; border-radius: 12px; background: #0d1117; color: white; border: 1px solid #30363d; font-size: 16px; }
+        .setup-row { margin-bottom: 12px; text-align: left; }
+        label { font-size: 11px; color: #8b949e; display: block; margin-bottom: 4px; text-transform: uppercase; }
+        select, input { width: 100%; padding: 10px; border-radius: 10px; background: #0d1117; color: white; border: 1px solid #30363d; font-size: 15px; }
 
-        .history { background: #000; padding: 12px; border-radius: 12px; height: 110px; overflow-y: auto; font-family: monospace; font-size: 12px; color: #8b949e; border: 1px solid #21262d; }
-        .log-item { border-bottom: 1px solid #222; padding: 4px 0; animation: slideIn 0.2s ease-out; }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(-5px); } to { opacity: 1; transform: translateX(0); } }
+        .history { background: #000; padding: 12px; border-radius: 12px; height: 100px; overflow-y: auto; font-family: monospace; font-size: 12px; color: #8b949e; border: 1px solid #21262d; }
+        .log-line { border-bottom: 1px solid #1a1a1a; padding: 3px 0; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
         .hidden { display: none; }
-        .pulse { animation: pulseAnim 0.4s ease-out; }
-        @keyframes pulseAnim { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
+        .pulse { animation: pulse 0.4s ease; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div id="setup" class="card">
-        <h2 style="margin:0 0 20px 0">🪰 МУХА PRO: ЦЕПОЧКА</h2>
+        <h2 style="margin:0 0 20px 0">🪰 МУХА PRO</h2>
         
         <div class="setup-row">
-            <label>Ваш цвет:</label>
-            <select id="primaryColor">
+            <label>Цвет твоей мухи:</label>
+            <select id="pColor">
                 <option value="0">Красная 🔴</option>
                 <option value="1" selected>Зеленая 🟢</option>
                 <option value="2">Синяя 🔵</option>
@@ -59,7 +60,7 @@
         </div>
 
         <div class="setup-row">
-            <label>Игроков ИИ в цепочке:</label>
+            <label>Цепочка (ИИ-ботов):</label>
             <select id="aiCount">
                 <option value="1">1 Бот (Альфа 🤖)</option>
                 <option value="2">2 Бота (Альфа, Бета 🦾)</option>
@@ -68,22 +69,30 @@
         </div>
 
         <div class="setup-row">
-            <label>Количество мух:</label>
-            <select id="flyCount">
-                <option value="1">1 Муха</option>
-                <option value="2">2 Мухи</option>
-                <option value="3">3 Мухи</option>
+            <label>Сложность (риск вылета):</label>
+            <select id="difficulty">
+                <option value="0.03">Низкая (безопасно)</option>
+                <option value="0.1" selected>Средняя (стандарт)</option>
+                <option value="0.25">Высокая (опасно)</option>
             </select>
         </div>
 
-        <button onclick="startGame()" class="btn btn-out" style="margin-top: 10px;">Запустить цепочку</button>
+        <div class="setup-row">
+            <label>Кол-во мух:</label>
+            <select id="flyCount">
+                <option value="1">1 Муха</option>
+                <option value="2">2 Мухи</option>
+            </select>
+        </div>
+
+        <button onclick="startGame()" class="btn btn-out" style="margin-top: 10px;">Начать игру</button>
     </div>
 
     <div id="game" class="card hidden">
-        <div id="turnTag" class="turn-indicator">Ожидание...</div>
+        <div id="turnTag" class="turn-tag">Очередь</div>
         <div class="status-box" id="status"></div>
         
-        <button id="toggleGrid" style="background:none; border:1px solid #30363d; color:#8b949e; padding:5px 12px; border-radius:20px; cursor:pointer; font-size:10px; margin-bottom:10px;" onclick="toggleGrid()">👁 Скрыть поле</button>
+        <button id="toggleGrid" style="background:none; border:1px solid #30363d; color:#555; padding:4px 12px; border-radius:20px; cursor:pointer; font-size:10px; margin-bottom:10px;" onclick="toggleGrid()">👁 Скрыть поле</button>
 
         <div class="grid-container"><div id="grid" class="grid"></div></div>
         
@@ -92,10 +101,9 @@
             <button class="btn btn-dir" onclick="handleMove('влево')">←</button>
             <button class="btn btn-dir" onclick="handleMove('вниз')">↓</button>
             <button class="btn btn-dir" onclick="handleMove('вправо')">→</button>
-            <button class="btn btn-out" onclick="playerClaimOut()">ВЫЛЕТ!</button>
+            <button class="btn btn-out" onclick="playerClaimOut()">Муха вылетела!</button>
         </div>
         <div id="log" class="history"></div>
-        <button onclick="location.reload()" style="margin-top:10px; background:none; border:none; color:#555; cursor:pointer; font-size:12px">Выход в меню</button>
     </div>
 </div>
 
@@ -104,21 +112,16 @@
         { name: 'Красная муха', icon: '🔴' }, { name: 'Зеленая муха', icon: '🟢' },
         { name: 'Синяя муха', icon: '🔵' }, { name: 'Желтая муха', icon: '🟡' }, { name: 'Фиолетовая муха', icon: '🟣' }
     ];
+    const aiBots = [{ n: 'ИИ Альфа', i: '🤖' }, { n: 'ИИ Бета', i: '🦾' }, { n: 'ИИ Гамма', i: '⚙️' }];
 
-    const aiBots = [
-        { name: 'ИИ Альфа', icon: '🤖' },
-        { name: 'ИИ Бета', icon: '🦾' },
-        { name: 'ИИ Гамма', icon: '⚙️' }
-    ];
-
-    let cfg = { size: 3, flyCount: 1, aiCount: 1 };
+    let cfg = { size: 3, fCount: 1, aiCount: 1, diff: 0.1 };
     let flies = [];
-    let turnChain = []; // Очередь игроков: ['user', 'ai0', 'ai1'...]
-    let currentTurnIdx = 0;
+    let turnChain = [];
+    let chainIdx = 0;
     let activeFlyIdx = 0;
-    let totalMoves = 0;
-    let isGameOver = false;
-    let aiTimer;
+    let moveCount = 0;
+    let gameOver = false;
+    let aiWait;
 
     const dirs = { 'вверх': {x: 0, y: -1}, 'вниз': {x: 0, y: 1}, 'влево': {x: -1, y: 0}, 'вправо': {x: 1, y: 0} };
     const opposites = { 'вверх': 'вниз', 'вниз': 'вверх', 'влево': 'вправо', 'вправо': 'влево' };
@@ -130,19 +133,17 @@
     }
 
     function startGame() {
-        cfg.size = 3; // Для тренировки лучше 3
-        cfg.flyCount = parseInt(document.getElementById('flyCount').value);
+        cfg.fCount = parseInt(document.getElementById('flyCount').value);
         cfg.aiCount = parseInt(document.getElementById('aiCount').value);
-        const colorStart = parseInt(document.getElementById('primaryColor').value);
+        cfg.diff = parseFloat(document.getElementById('difficulty').value);
+        const cStart = parseInt(document.getElementById('pColor').value);
 
-        // Создаем мух
         flies = [];
-        for(let i=0; i<cfg.flyCount; i++) {
-            let meta = flyMeta[(colorStart + i) % flyMeta.length];
-            flies.push({ x: 1, y: 1, ...meta, out: false, last: null });
+        for(let i=0; i<cfg.fCount; i++) {
+            let m = flyMeta[(cStart + i) % flyMeta.length];
+            flies.push({ x: 1, y: 1, ...m, out: false, last: null });
         }
 
-        // Создаем цепочку ходов: Сначала Ты, потом все ИИ
         turnChain = ['user'];
         for(let i=0; i<cfg.aiCount; i++) turnChain.push('ai' + i);
 
@@ -153,58 +154,50 @@
         g.style.gridTemplateColumns = `repeat(3, 1fr)`;
         for(let i=0; i<9; i++) g.innerHTML += `<div class="cell"></div>`;
 
-        // ПЕРВЫЙ ХОД (всегда ИИ Альфа для затравки)
+        // ПЕРВЫЙ ХОД (ИИ Альфа)
         const f = flies[0];
         const d = Object.keys(dirs)[Math.floor(Math.random()*4)];
-        const startMsg = `${f.name} в центре — ${f.name} ${d}`;
+        const msg = `${f.name} в центре — ${f.name} ${d}`;
+        updateStatus(`${f.icon} ${msg}`);
+        speak(msg);
+        moveLogic(f, d, aiBots[0].n, aiBots[0].i);
         
-        updateStatus(`${f.icon} ${startMsg}`);
-        speak(startMsg);
-        moveLogic(f, d, aiBots[0].name, aiBots[0].icon);
-        
-        // Переходим к следующему в цепочке (к пользователю)
+        chainIdx = 0; // Начинаем с пользователя (так как ИИ уже походил)
         nextTurn();
     }
 
     function nextTurn() {
-        if(isGameOver) return;
-        currentTurnIdx = (currentTurnIdx + 1) % turnChain.length;
-        const currentId = turnChain[currentTurnIdx];
+        if(gameOver) return;
+        chainIdx = (chainIdx + 1) % turnChain.length;
+        const id = turnChain[chainIdx];
 
-        if(currentId === 'user') {
-            document.getElementById('turnTag').innerText = "ТВОЙ ХОД";
-            toggleControls(true);
+        if(id === 'user') {
+            document.getElementById('turnTag').innerText = "Твой ход";
+            toggleBtns(true);
         } else {
-            const aiIdx = parseInt(currentId.replace('ai', ''));
-            document.getElementById('turnTag').innerText = `ХОДИТ ${aiBots[aiIdx].name}`;
-            toggleControls(false);
-            setTimeout(() => performAiMove(aiIdx), 1500);
+            const idx = parseInt(id.replace('ai', ''));
+            document.getElementById('turnTag').innerText = `Ходит ${aiBots[idx].n}`;
+            toggleBtns(false);
+            setTimeout(() => performAiMove(idx), 1200);
         }
     }
 
     function handleMove(d) {
-        if(isGameOver) return;
+        if(gameOver) return;
         let f = flies[activeFlyIdx];
-        
         if(f.last && d === opposites[f.last]) {
             speak("Ошибка! Назад нельзя.");
             return endGame("Проигрыш! Обратный ход запрещен.");
         }
-
         moveLogic(f, d, 'Ты', '👤');
-        if(f.out) {
-            aiTimer = setTimeout(() => endGame(`ИИ ЗАМЕТИЛ! ${f.name} улетела на твоем ходу.`), 3500);
-        } else {
-            activeFlyIdx = (activeFlyIdx + 1) % cfg.flyCount;
-            totalMoves++;
-            nextTurn();
-        }
+        if(f.out) aiWait = setTimeout(() => endGame(`ИИ ЗАМЕТИЛ! ${f.name} улетела.`), 3500);
+        else { activeFlyIdx = (activeFlyIdx + 1) % cfg.fCount; moveCount++; nextTurn(); }
     }
 
-    function performAiMove(botIdx) {
-        if(isGameOver || flies.some(fl => fl.out)) return;
+    function performAiMove(idx) {
+        if(gameOver || flies.some(fl => fl.out)) return;
         let f = flies[activeFlyIdx];
-        let bot = aiBots[botIdx];
+        let bot = aiBots[idx];
         
         let keys = Object.keys(dirs).filter(k => k !== opposites[f.last]);
         let safe = keys.filter(k => { 
@@ -212,49 +205,38 @@
             return nx >= 0 && nx < 3 && ny >= 0 && ny < 3; 
         });
 
-        // Чем больше ходов, тем выше шанс вылета (после 5 хода)
-        let move = (totalMoves < 5 || Math.random() > 0.1) && safe.length > 0 ? 
+        // ИСПОЛЬЗУЕМ СЛОЖНОСТЬ (diff)
+        let move = (moveCount < 5 || Math.random() > cfg.diff) && safe.length > 0 ? 
                    safe[Math.floor(Math.random()*safe.length)] : 
                    keys[Math.floor(Math.random()*keys.length)];
 
         const msg = `${f.name} ${move}`;
         updateStatus(`${f.icon} ${msg.toUpperCase()}`);
         speak(msg);
-        moveLogic(f, move, bot.name, bot.icon);
+        moveLogic(f, move, bot.n, bot.i);
 
-        if(f.out) {
-            aiTimer = setTimeout(() => endGame(`ИИ ПОБЕДИЛ! Ты пропустил вылет (${f.name})`), 4000);
-        } else {
-            activeFlyIdx = (activeFlyIdx + 1) % cfg.flyCount;
-            totalMoves++;
-            nextTurn();
-        }
+        if(f.out) aiWait = setTimeout(() => endGame(`ИИ ПОБЕДИЛ! Ты пропустил вылет ${f.name}`), 4000);
+        else { activeFlyIdx = (activeFlyIdx + 1) % cfg.fCount; moveCount++; nextTurn(); }
     }
 
-    function moveLogic(f, d, playerName, playerIcon) {
+    function moveLogic(f, d, pName, pIcon) {
         f.x += dirs[d].x; f.y += dirs[d].y; f.last = d;
-        const entry = `<div class="log-item">${playerIcon} ${playerName}: ${f.icon} ${d}</div>`;
-        document.getElementById('log').innerHTML = entry + document.getElementById('log').innerHTML;
-        
+        const log = document.getElementById('log');
+        log.innerHTML = `<div class="log-line">${pIcon} ${pName}: ${f.icon} ${d}</div>` + log.innerHTML;
         const sb = document.getElementById('status');
         sb.classList.remove('pulse'); void sb.offsetWidth; sb.classList.add('pulse');
-        
         if(f.x < 0 || f.x >= 3 || f.y < 0 || f.y >= 3) f.out = true;
     }
 
     function playerClaimOut() {
-        clearTimeout(aiTimer);
-        if(flies.some(f => f.out)) endGame("ПОБЕДА! Ты отследил всю цепочку.");
-        else endGame("ОШИБКА! Муха все еще в поле.");
+        clearTimeout(aiWait);
+        if(flies.some(f => f.out)) endGame("ПОБЕДА! Концентрация на высоте.");
+        else endGame("ОШИБКА! Муха еще на поле.");
     }
 
-    function toggleControls(on) {
-        const btns = document.querySelectorAll('.btn-dir');
-        btns.forEach(b => b.disabled = !on);
-    }
-
+    function toggleBtns(on) { document.querySelectorAll('.btn-dir').forEach(b => b.disabled = !on); }
     function updateStatus(t) { document.getElementById('status').innerText = t; }
-    function endGame(m) { isGameOver = true; alert(m); location.reload(); }
+    function endGame(m) { gameOver = true; alert(m); location.reload(); }
 </script>
 </body>
 </html>
