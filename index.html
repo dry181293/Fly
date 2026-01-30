@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Муха PRO: Fixed Edition</title>
+    <title>Муха PRO: Ultimate Edition</title>
     <style>
         :root { --bg: #0b0e14; --panel: #161b22; --primary: #7928ca; --accent: #ff0080; --text: #e6edf3; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b0e14; color: var(--text); margin: 0; min-height: 100vh; display: flex; justify-content: center; touch-action: manipulation; }
@@ -12,17 +12,17 @@
         .card { background: var(--panel); border-radius: 24px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid #30363d; text-align: center; position: relative; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .title-fly { display: inline-block; animation: buzz 0.3s infinite alternate; }
+        .title-fly { display: inline-block; animation: buzz 0.3s infinite alternate; font-size: 2rem; }
         @keyframes buzz { from { transform: translate(0,0); } to { transform: translate(1px, 1px); } }
 
         .help-btn { position: absolute; top: 20px; right: 20px; background: #30363d; border: none; color: var(--primary); width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-weight: bold; z-index: 5; }
 
-        .status-box { min-height: 90px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: bold; margin-bottom: 10px; }
+        .status-box { min-height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: bold; margin-bottom: 10px; font-size: 1.1rem; }
         .turn-tag { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--primary); margin-bottom: 5px; border: 1px solid; padding: 2px 8px; border-radius: 10px; }
 
         .grid { display: grid; gap: 8px; background: #30363d; padding: 10px; border-radius: 16px; margin: 10px auto 20px; transition: 0.3s; }
-        .grid.hidden-grid { opacity: 0; transform: scale(0.9); pointer-events: none; }
-        .cell { width: 50px; height: 50px; background: #0d1117; border-radius: 8px; border: 1px solid #21262d; }
+        .grid.hidden-grid { opacity: 0; transform: scale(0.8); pointer-events: none; }
+        .cell { background: #0d1117; border-radius: 8px; border: 1px solid #21262d; min-width: 45px; min-height: 45px; }
 
         .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .btn { border: none; border-radius: 16px; cursor: pointer; color: white; font-weight: bold; transition: 0.2s; }
@@ -32,11 +32,12 @@
         
         .btn-out { grid-column: span 3; background: linear-gradient(90deg, var(--accent), var(--primary)); padding: 18px; font-size: 1.1rem; text-transform: uppercase; margin-top: 10px; box-shadow: 0 4px 15px rgba(121, 40, 202, 0.3); }
 
-        .setup-row { margin-bottom: 12px; text-align: left; }
-        label { font-size: 11px; color: #8b949e; display: block; margin-bottom: 4px; text-transform: uppercase; }
-        select { width: 100%; padding: 10px; border-radius: 10px; background: #0d1117; color: white; border: 1px solid #30363d; font-size: 15px; outline: none; }
+        .setup-row { margin-bottom: 15px; text-align: left; }
+        label { font-size: 11px; color: #8b949e; display: block; margin-bottom: 6px; text-transform: uppercase; font-weight: 600; }
+        select, input { width: 100%; padding: 12px; border-radius: 12px; background: #0d1117; color: white; border: 1px solid #30363d; font-size: 15px; outline: none; box-sizing: border-box; }
+        select:focus { border-color: var(--primary); }
 
-        .history { background: #000; padding: 12px; border-radius: 12px; height: 100px; overflow-y: auto; font-family: monospace; font-size: 12px; color: #8b949e; border: 1px solid #21262d; margin-top: 15px; text-align: left; }
+        .history { background: #000; padding: 12px; border-radius: 12px; height: 90px; overflow-y: auto; font-family: monospace; font-size: 12px; color: #8b949e; border: 1px solid #21262d; margin-top: 15px; text-align: left; }
         
         .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:100; align-items:center; justify-content:center; padding:20px; box-sizing: border-box; }
         .modal-content { background: var(--panel); padding: 25px; border-radius: 20px; border: 1px solid var(--primary); max-width: 350px; text-align: center; }
@@ -49,7 +50,8 @@
 <div class="container">
     <div id="setup" class="card">
         <button class="help-btn" onclick="toggleModal(true)">?</button>
-        <h2 style="margin: 0 0 20px 0;"><span class="title-fly">🪰</span> МУХА PRO</h2>
+        <div class="title-fly">🪰</div>
+        <h2 style="margin: 0 0 25px 0; letter-spacing: 1px;">МУХА PRO</h2>
         
         <div class="setup-row">
             <label>Цвет первой мухи:</label>
@@ -63,7 +65,27 @@
         </div>
 
         <div class="setup-row">
-            <label>Игроков ИИ:</label>
+            <label>Количество мух на поле:</label>
+            <select id="flyCount">
+                <option value="1">1 Муха</option>
+                <option value="2">2 Мухи</option>
+                <option value="3">3 Мухи</option>
+                <option value="4">4 Мухи</option>
+                <option value="5">5 Мух (MAX)</option>
+            </select>
+        </div>
+
+        <div class="setup-row">
+            <label>Размер поля (сетка):</label>
+            <select id="gridSize">
+                <option value="3" selected>3 x 3 (Классика)</option>
+                <option value="4">4 x 4 (Среднее)</option>
+                <option value="5">5 x 5 (Большое)</option>
+            </select>
+        </div>
+
+        <div class="setup-row">
+            <label>Игроков ИИ (цепочка):</label>
             <select id="aiChain">
                 <option value="1">1 Бот (Альфа 🤖)</option>
                 <option value="2">2 Бота (Альфа, Бета 🦾)</option>
@@ -71,26 +93,16 @@
             </select>
         </div>
 
-        <div class="setup-row">
-            <label>Количество мух:</label>
-            <select id="flyCount">
-                <option value="1">1 Муха</option>
-                <option value="2">2 Мухи</option>
-                <option value="3">3 Мухи</option>
-                <option value="4">4 Мухи</option>
-                <option value="5">5 Мух</option>
-            </select>
-        </div>
-
-        <button onclick="startGame()" class="btn btn-out">Взлетаем!</button>
+        <button onclick="startGame()" class="btn btn-out" style="margin-top: 10px;">ВЗЛЕТАЕМ!</button>
     </div>
 
     <div id="game" class="card hidden">
         <button class="help-btn" onclick="toggleModal(true)">?</button>
-        <div id="turnTag" class="turn-tag">...</div>
+        <div id="turnTag" class="turn-tag">Запуск...</div>
         <div id="status" class="status-box"></div>
         
-        <button id="toggleGrid" style="background:none; border:none; color:#555; cursor:pointer; font-size:10px; margin-bottom:5px;" onclick="toggleGrid()">👁 Показать/Скрыть поле</button>
+        <button id="toggleGrid" style="background:none; border:none; color:#555; cursor:pointer; font-size:10px; margin-bottom:5px;" onclick="toggleGrid()">👁 Скрыть/Показать поле</button>
+
         <div class="grid" id="grid"></div>
         
         <div class="controls">
@@ -101,21 +113,21 @@
             <button class="btn btn-out" onclick="playerClaimOut()">МУХА ВЫЛЕТЕЛА!</button>
         </div>
         <div id="log" class="history"></div>
-        <button onclick="location.reload()" style="background:none; border:none; color:#444; margin-top:10px; cursor:pointer;">В меню</button>
+        <button onclick="location.reload()" style="background:none; border:none; color:#444; margin-top:15px; cursor:pointer; font-size:12px;">Сдаться и выйти</button>
     </div>
 </div>
 
 <div id="helpModal" class="modal">
     <div class="modal-content">
-        <h3 style="color:var(--primary); margin-top:0">Правила</h3>
+        <h3 style="color:var(--primary); margin-top:0">Правила тренировки</h3>
         <p style="font-size: 13px; text-align: left; line-height: 1.5; color: #ccc;">
-            • Следи за всеми мухами в уме.<br>
-            • После старта ИИ, первый ход делаешь ТЫ.<br>
-            • Нельзя ходить назад той же мухой.<br>
-            • Если муха вылетела — жми красную кнопку.<br>
-            • Разминка: 5 первых ходов.
+            • Удерживай в памяти позиции всех мух одновременно.<br>
+            • Ходы идут по очереди: Ты → Боты.<br>
+            • Каждому ходу соответствует своя муха (по кругу).<br>
+            • <b>Запрещено</b> ходить в сторону, обратную последнему ходу этой же мухи.<br>
+            • Если любая муха вышла за границы — жми кнопку!
         </p>
-        <button class="btn btn-out" style="width:100%" onclick="toggleModal(false)">Понял!</button>
+        <button class="btn btn-out" style="width:100%" onclick="toggleModal(false)">Все понятно!</button>
     </div>
 </div>
 
@@ -146,27 +158,29 @@
         cfg = {
             fCount: parseInt(document.getElementById('flyCount').value),
             aiCount: parseInt(document.getElementById('aiChain').value),
+            size: parseInt(document.getElementById('gridSize').value),
             startColor: parseInt(document.getElementById('flyColor').value)
         };
 
+        const center = Math.floor(cfg.size / 2);
         flies = [];
         for(let i=0; i<cfg.fCount; i++) {
             let m = metas[(cfg.startColor + i) % metas.length];
-            flies.push({ x: 1, y: 1, ...m, out: false, last: null });
+            flies.push({ x: center, y: center, ...m, out: false, last: null });
         }
 
         chain = ['user'];
-        for(let i=0; i<cfg.aiCount; i++) chain.push('ai' + (i));
+        for(let i=0; i<cfg.aiCount; i++) chain.push('ai' + i);
 
         document.getElementById('setup').classList.add('hidden');
         document.getElementById('game').classList.remove('hidden');
 
         const g = document.getElementById('grid');
-        g.style.gridTemplateColumns = 'repeat(3, 1fr)';
+        g.style.gridTemplateColumns = `repeat(${cfg.size}, 1fr)`;
         g.innerHTML = '';
-        for(let i=0; i<9; i++) g.innerHTML += '<div class="cell"></div>';
+        for(let i=0; i < cfg.size * cfg.size; i++) g.innerHTML += '<div class="cell"></div>';
 
-        // ПЕРВЫЙ ВВОДНЫЙ ХОД ИИ
+        // ПЕРВЫЙ ХОД ИИ
         const f = flies[0];
         const d = Object.keys(dirs)[Math.floor(Math.random()*4)];
         const startPhrase = `${f.n} в центре — ${f.n} ${d}`;
@@ -174,7 +188,7 @@
         speak(startPhrase);
         moveLogic(f, d, bots[0].n, bots[0].i);
 
-        // Установка очереди так, чтобы следующим был игрок
+        // Настройка очереди: теперь точно ходит Игрок мухой №2 (или №1 если муха одна)
         cIdx = chain.length - 1; 
         fIdx = cfg.fCount > 1 ? 1 : 0; 
         nextTurn();
@@ -183,16 +197,16 @@
     function nextTurn() {
         if(isGameOver) return;
         cIdx = (cIdx + 1) % chain.length;
-        const currentPlayer = chain[cIdx];
+        const p = chain[cIdx];
 
-        if(currentPlayer === 'user') {
+        if(p === 'user') {
             document.getElementById('turnTag').innerText = "Твой ход";
             toggleBtns(true);
         } else {
-            const botNum = parseInt(currentPlayer.replace('ai',''));
-            document.getElementById('turnTag').innerText = `Ходит ${bots[botNum].n}`;
+            const bIdx = parseInt(p.replace('ai',''));
+            document.getElementById('turnTag').innerText = `Ходит ${bots[bIdx].n}`;
             toggleBtns(false);
-            setTimeout(() => performAi(botNum), 1500);
+            setTimeout(() => performAi(bIdx), 1500);
         }
     }
 
@@ -202,19 +216,19 @@
         if(f.last && d === opps[f.last]) return alert("Нельзя назад!");
         
         moveLogic(f, d, 'Ты', '👤');
-        if(f.out) aiWaitTimer = setTimeout(() => finish(`ИИ заметил! Муха ${f.n} улетела.`), 3500);
+        if(f.out) aiWaitTimer = setTimeout(() => finish(`ИИ ЗАМЕТИЛ! Муха ${f.n} улетела.`), 3500);
         else { fIdx = (fIdx + 1) % cfg.fCount; totalMoves++; nextTurn(); }
     }
 
-    function performAi(botIdx) {
+    function performAi(bIdx) {
         if(isGameOver || flies.some(f => f.out)) return;
         let f = flies[fIdx];
-        let bot = bots[botIdx];
+        let bot = bots[bIdx];
 
         let keys = Object.keys(dirs).filter(k => k !== opps[f.last]);
         let safe = keys.filter(k => {
             let nx = f.x + dirs[k].x; let ny = f.y + dirs[k].y;
-            return nx >= 0 && nx < 3 && ny >= 0 && ny < 3;
+            return nx >= 0 && nx < cfg.size && ny >= 0 && ny < cfg.size;
         });
 
         let m = (totalMoves < 5 || Math.random() > 0.1) && safe.length > 0 ? 
@@ -225,21 +239,21 @@
         speak(`${f.n} ${m}`);
         moveLogic(f, m, bot.n, bot.i);
 
-        if(f.out) aiWaitTimer = setTimeout(() => finish(`ИИ проиграл! Вы пропустили вылет ${f.n}`), 4000);
+        if(f.out) aiWaitTimer = setTimeout(() => finish(`ИИ ПРОИГРАЛ! Вы пропустили вылет ${f.n}`), 4000);
         else { fIdx = (fIdx + 1) % cfg.fCount; totalMoves++; nextTurn(); }
     }
 
     function moveLogic(f, d, pN, pI) {
         f.x += dirs[d].x; f.y += dirs[d].y; f.last = d;
         const l = document.getElementById('log');
-        l.innerHTML = `<div style="border-bottom:1px solid #222; padding:3px 0">${pI} ${pN}: ${f.i} ${d}</div>` + l.innerHTML;
-        if(f.x < 0 || f.x >= 3 || f.y < 0 || f.y >= 3) f.out = true;
+        l.innerHTML = `<div style="border-bottom:1px solid #222; padding:4px 0">${pI} ${pN}: ${f.i} ${d}</div>` + l.innerHTML;
+        if(f.x < 0 || f.x >= cfg.size || f.y < 0 || f.y >= cfg.size) f.out = true;
     }
 
     function playerClaimOut() {
         clearTimeout(aiWaitTimer);
-        if(flies.some(f => f.out)) finish("ПОБЕДА! Ты вовремя заметил вылет.");
-        else finish("ОШИБКА! Все мухи на поле.");
+        if(flies.some(f => f.out)) finish("ПОБЕДА! Внимание на высоте.");
+        else finish("ОШИБКА! Все мухи ещё внутри.");
     }
 
     function toggleBtns(on) { document.querySelectorAll('.btn-dir').forEach(b => b.disabled = !on); }
